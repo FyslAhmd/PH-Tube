@@ -13,7 +13,8 @@ function displayCategory(categories) {
     container.appendChild(btn);
   }
 }
-// loadCategory();
+loadCategory();
+
 
 // load video
 function loadVideo() {
@@ -27,21 +28,33 @@ function displayVideo(videos) {
   videos.forEach((video) => {
     const videoCard = document.createElement("div");
     videoCard.innerHTML = `
-        <div class="card bg-base-100 shadow-sm">
-        <figure>
-          <img
-            src="${video.thumbnail}"
-            alt="Shoes" />
-        </figure>
-        <div class="card-body">
-          <h2 class="card-title">${video.title}</h2>
-          <p>A card component has a figure, a body part, and inside body there are title and actions parts</p>
-          <div class="card-actions justify-end">
-            <button class="btn btn-primary">Buy Now</button>
+    <div class="card bg-base-100">
+    <figure class="relative">
+        <img class="w-full h-[150px] object-cover" src="${video.thumbnail}" alt="Shoes" />
+        <span class="absolute bottom-2 right-2 text-white bg-black p-2 text-sm rounded">3hrs 56 min
+            ago</span>
+    </figure>
+    <div class="flex gap-3 px-0 py-5">
+        <div class="profile">
+            <div class="avatar">
+                <div class="ring-primary ring-offset-base-100 w-8 rounded-full ring ring-offset-2">
+                    <img src="${video.authors[0].profile_picture}" />
+                </div>
+            </div>
+        </div>
+        <div class="intro">
+            <h2 class="text-sm font-semibold">${video.title}</h2>
+            <p class="text-sm text-gray-400 flex gap-1">${video.authors[0].profile_name}
+                <img class="w-5 h-5" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"
+                    alt="">
+            </p>
+            <p class="text-sm text-gray-400">${video.others.views}</p>
           </div>
         </div>
       </div>`;
     videoContainer.appendChild(videoCard);
   });
 }
-loadVideo();
+
+
+// load category videos
