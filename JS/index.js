@@ -1,3 +1,12 @@
+const showLoader = () => {
+  document.getElementById("loader").classList.remove("hidden");
+  document.getElementById("videoContainer").classList.add("hidden");
+};
+const hideLoader = () => {
+  document.getElementById("loader").classList.add("hidden");
+  document.getElementById("videoContainer").classList.remove("hidden");
+};
+
 function loadCategory() {
   fetch("https://openapi.programming-hero.com/api/phero-tube/categories")
     .then((res) => res.json())
@@ -17,8 +26,11 @@ function displayCategory(categories) {
 loadCategory();
 
 // load video
-function loadVideo(searchText='') {
-  fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
+function loadVideo(searchText = "") {
+  showLoader();
+  fetch(
+    `https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`
+  )
     .then((res) => res.json())
     .then((data) => {
       removeClass();
@@ -36,6 +48,7 @@ function displayVideo(videos) {
                 <img src="assets/Icon.png" alt="" class="w-28">
                 <h2 class="text-2xl font-bold">Oops!! Sorry, There is no content here</h2>
             </div>`;
+    hideLoader();
     return;
   }
 
@@ -44,7 +57,9 @@ function displayVideo(videos) {
     videoCard.innerHTML = `
     <div class="card bg-base-100">
     <figure class="relative">
-        <img class="w-full h-[150px] object-cover" src="${video.thumbnail}" alt="Shoes" />
+        <img class="w-full h-[150px] object-cover" src="${
+          video.thumbnail
+        }" alt="Shoes" />
         <span class="absolute bottom-2 right-2 text-white bg-black p-2 text-sm rounded">3hrs 56 min
             ago</span>
     </figure>
@@ -58,21 +73,31 @@ function displayVideo(videos) {
         </div>
         <div class="intro">
             <h2 class="text-sm font-semibold">${video.title}</h2>
-            <p class="text-sm text-gray-400 flex gap-1">${video.authors[0].profile_name}
-                ${video.authors[0].verified == true ? `<img class="w-5 h-5" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"
-                alt="">`: ''}
+            <p class="text-sm text-gray-400 flex gap-1">${
+              video.authors[0].profile_name
+            }
+                ${
+                  video.authors[0].verified == true
+                    ? `<img class="w-5 h-5" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"
+                alt="">`
+                    : ""
+                }
             </p>
             <p class="text-sm text-gray-400">${video.others.views}</p>
           </div>
         </div>
-        <button onclick="loadVideoDetails('${video.video_id}')" class="btn btn-block">Show Details</button>
+        <button onclick="loadVideoDetails('${
+          video.video_id
+        }')" class="btn btn-block">Show Details</button>
       </div>`;
     videoContainer.appendChild(videoCard);
+    hideLoader();
   });
 }
 
 // load category videos
 const loadCategories = (id) => {
+  showLoader();
   const url = `https://openapi.programming-hero.com/api/phero-tube/category/${id}`;
   fetch(url)
     .then((res) => res.json())
@@ -117,8 +142,7 @@ const displayVideDetails = (video) => {
 </div>`;
 };
 
-
-document.getElementById('search-input').addEventListener('keyup', (e) => {
+document.getElementById("search-input").addEventListener("keyup", (e) => {
   const input = e.target.value;
   loadVideo(input);
-})
+});
