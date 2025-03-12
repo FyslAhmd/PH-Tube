@@ -17,12 +17,12 @@ function displayCategory(categories) {
 loadCategory();
 
 // load video
-function loadVideo() {
-  fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
+function loadVideo(searchText='') {
+  fetch(`https://openapi.programming-hero.com/api/phero-tube/videos?title=${searchText}`)
     .then((res) => res.json())
     .then((data) => {
       removeClass();
-      document.getElementById('btn-all').classList.add('active');
+      document.getElementById("btn-all").classList.add("active");
       displayVideo(data.videos);
     });
 }
@@ -59,12 +59,13 @@ function displayVideo(videos) {
         <div class="intro">
             <h2 class="text-sm font-semibold">${video.title}</h2>
             <p class="text-sm text-gray-400 flex gap-1">${video.authors[0].profile_name}
-                <img class="w-5 h-5" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"
-                    alt="">
+                ${video.authors[0].verified == true ? `<img class="w-5 h-5" src="https://img.icons8.com/?size=48&id=D9RtvkuOe31p&format=png"
+                alt="">`: ''}
             </p>
             <p class="text-sm text-gray-400">${video.others.views}</p>
           </div>
         </div>
+        <button onclick="loadVideoDetails('${video.video_id}')" class="btn btn-block">Show Details</button>
       </div>`;
     videoContainer.appendChild(videoCard);
   });
@@ -89,3 +90,35 @@ function removeClass() {
     btn.classList.remove("active");
   }
 }
+
+function loadVideoDetails(videoID) {
+  const url = `https://openapi.programming-hero.com/api/phero-tube/video/${videoID}`;
+
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => displayVideDetails(data.video));
+}
+
+const displayVideDetails = (video) => {
+  console.log(video);
+  document.getElementById("video_details").showModal();
+  const detailsContainer = document.getElementById("details-container");
+
+  detailsContainer.innerHTML = `
+  <div class="card bg-base-100 image-full shadow-sm">
+  <figure>
+    <img
+      src="${video.thumbnail}" />
+  </figure>
+  <div class="card-body">
+    <h2 class="card-title">${video.title}</h2>
+    <p>${video.description}</p>
+  </div>
+</div>`;
+};
+
+
+document.getElementById('search-input').addEventListener('keyup', (e) => {
+  const input = e.target.value;
+  loadVideo(input);
+})
