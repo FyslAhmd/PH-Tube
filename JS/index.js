@@ -8,22 +8,36 @@ function displayCategory(categories) {
 
   for (const cat of categories) {
     btn = document.createElement("button");
-    btn.innerText = `${cat.category}`;
-    btn.classList.add("btn", "btn-sm", "hover:bg-red-600", "hover:text-white");
-    container.appendChild(btn);
+    btn.innerHTML = `
+    <button id="btn-${cat.category_id}" onclick="loadCategories(${cat.category_id})" class="btn btn-sm hover:bg-red-600 hover:text-white">${cat.category}</button>
+    `;
+    container.append(btn);
   }
 }
 loadCategory();
-
 
 // load video
 function loadVideo() {
   fetch("https://openapi.programming-hero.com/api/phero-tube/videos")
     .then((res) => res.json())
-    .then((data) => displayVideo(data.videos));
+    .then((data) => {
+      removeClass();
+      document.getElementById('btn-all').classList.add('active');
+      displayVideo(data.videos);
+    });
 }
 function displayVideo(videos) {
   const videoContainer = document.getElementById("videoContainer");
+  videoContainer.innerHTML = ``;
+
+  if (videos.length == 0) {
+    videoContainer.innerHTML = `
+    <div class="col-span-full flex flex-col justify-center items-center py-28">
+                <img src="assets/Icon.png" alt="" class="w-28">
+                <h2 class="text-2xl font-bold">Oops!! Sorry, There is no content here</h2>
+            </div>`;
+    return;
+  }
 
   videos.forEach((video) => {
     const videoCard = document.createElement("div");
@@ -56,5 +70,22 @@ function displayVideo(videos) {
   });
 }
 
-
 // load category videos
+const loadCategories = (id) => {
+  const url = `https://openapi.programming-hero.com/api/phero-tube/category/${id}`;
+  fetch(url)
+    .then((res) => res.json())
+    .then((data) => {
+      removeClass();
+      const clickedBtn = document.getElementById(`btn-${id}`);
+      clickedBtn.classList.add("active");
+      displayVideo(data.category);
+    });
+};
+
+function removeClass() {
+  const activeBtn = document.getElementsByClassName("active");
+  for (let btn of activeBtn) {
+    btn.classList.remove("active");
+  }
+}
